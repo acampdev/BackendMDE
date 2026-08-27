@@ -1,0 +1,16 @@
+package gob.pe.muniesperanza.apprentasmdeapi.service;
+
+import gob.pe.muniesperanza.apprentasmdeapi.bean.ArbitrioParquesJardinesBean;
+import gob.pe.muniesperanza.apprentasmdeapi.util.ClsResultDAO;
+
+import java.util.List;
+
+public interface ArbitrioParquesJardinesService {
+
+  public ClsResultDAO insertarArbitrioParquesJardines(ArbitrioParquesJardinesBean arbitrioParquesJardinesBean) throws Exception ;
+
+  public ClsResultDAO actualizarArbitrioParquesJardines(ArbitrioParquesJardinesBean arbitrioParquesJardinesBean) throws Exception ;
+
+  public List<ArbitrioParquesJardinesBean> listarArbitrioParquesJardines(Integer anio) throws Exception   ;
+
+}

@@ -7,7 +7,7 @@ import gob.pe.muniesperanza.apprentasmdeapi.util.ClsResultDAO;
 import java.util.List;
 
 public interface CajaIDAO {
-
+// MODULO DE CAJA
   public ClsResultDAO insertar(CajaBean cajaBean) throws Exception;
 
   public ClsResultDAO actualizar(CajaBean cajaBean) throws Exception;

@@ -13,9 +13,12 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 public class FileUploadController {
+  private static final Logger log = LoggerFactory.getLogger(FileUploadController.class);
 
   @Autowired
   FileService storageService;
@@ -35,7 +38,7 @@ public class FileUploadController {
       // Se puede utilizar la propiedad "upload.dir" del application.properties
       // para definir la ruta
       // String uploadDir = env.getProperty("upload.dir");
-      System.out.println("Archivo subido exitosamente  "+file.getOriginalFilename());
+      log.info("File uploaded successfully: {}", file.getOriginalFilename());
       storageService.save(file);
 
       return "Archivo subido exitosamente";

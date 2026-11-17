@@ -7,6 +7,8 @@ import gob.pe.muniesperanza.apprentasmdeapi.util.ClsResultDAO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import gob.pe.muniesperanza.apprentasmdeapi.exception.ApiException;
 
 import java.util.List;
 @Service
@@ -28,9 +30,8 @@ public class AlcabalaServiceImpl    implements AlcabalaService {
         return objResultDAO;
       }
     } catch (Exception e) {
-      // TODO: handle exception
-      //log.error(e.getMessage(), e);
-      throw new Exception(e.getMessage(), e);
+      throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "ALCABALA_INSERT_FAILED",
+              "No se pudo registrar la alcabala", e);
     }
     return objResultDAO;
   }
@@ -44,9 +45,8 @@ public class AlcabalaServiceImpl    implements AlcabalaService {
         return objResultDAO;
       }
     } catch (Exception e) {
-      // TODO: handle exception
-      //log.error(e.getMessage(), e);
-      throw new Exception(e.getMessage(), e);
+      throw new ApiException(HttpStatus.SERVICE_UNAVAILABLE, "ALCABALA_UPDATE_FAILED",
+              "No se pudo actualizar la alcabala", e);
     }
     return objResultDAO;
   }

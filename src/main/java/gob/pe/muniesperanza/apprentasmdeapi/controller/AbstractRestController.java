@@ -33,8 +33,7 @@ public abstract class AbstractRestController {
       if(e == null) {
         response.setMessage(message.toString());
       }else {
-        response.setMessage(Constantes.MESSAGE_ERROR.concat(e.getMessage()));
-       // response.setMessage("Operation Failed!".concat(e.getMessage()));
+        response.setMessage(Constantes.MESSAGE_ERROR);
       }
 
       response.setSuccess(false);

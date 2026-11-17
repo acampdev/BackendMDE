@@ -9,6 +9,9 @@ import java.nio.file.Paths;
 import java.util.stream.Stream;
 
 import gob.pe.muniesperanza.apprentasmdeapi.service.FileService;
+import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -16,13 +19,18 @@ import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FileServiceImpl implements FileService {
+  private static final Logger log = LoggerFactory.getLogger(FileServiceImpl.class);
 
-  private final Path root = Paths.get("uploads");
+  private final Path root;
+
+  public FileServiceImpl(@Value("${storage.location:uploads}") String storageLocation) {
+    this.root = Paths.get(storageLocation).toAbsolutePath().normalize();
+  }
 
   @Override
   public void init() {
     try {
-      System.out.println("Creando el archivo"+root.toUri().getPath());
+      log.info("Initializing upload directory at {}", root);
       Files.createDirectories(root);
     } catch (IOException e) {
       throw new RuntimeException("Could not initialize folder for upload!");
@@ -32,7 +40,8 @@ public class FileServiceImpl implements FileService {
   @Override
   public void save(MultipartFile file) {
     try {
-      Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
+      Path destination = resolveFilename(file.getOriginalFilename());
+      Files.copy(file.getInputStream(), destination);
     } catch (Exception e) {
       if (e instanceof FileAlreadyExistsException) {
         throw new RuntimeException("A file of that name already exists.");
@@ -45,7 +54,7 @@ public class FileServiceImpl implements FileService {
   @Override
   public Resource load(String filename) {
     try {
-      Path file = root.resolve(filename);
+      Path file = resolveFilename(filename);
       Resource resource = new UrlResource(file.toUri());
 
       if (resource.exists() || resource.isReadable()) {
@@ -74,7 +83,7 @@ public class FileServiceImpl implements FileService {
 
   @Override
   public Resource downloadFile(String filename) {
-    Path file = root.resolve(filename);
+    Path file = resolveFilename(filename);
 
      try{
 
@@ -87,9 +96,20 @@ public class FileServiceImpl implements FileService {
 
       }
     }catch (Exception e){
-      System.out.println(e.getMessage());
+      log.warn("Unable to download file {}", filename, e);
       return null;
     }
     return null;
+  }
+
+  private Path resolveFilename(String filename) {
+    if (filename == null || filename.isBlank()) {
+      throw new RuntimeException("Invalid filename.");
+    }
+    Path resolved = root.resolve(filename).normalize();
+    if (!resolved.startsWith(root)) {
+      throw new RuntimeException("Invalid filename.");
+    }
+    return resolved;
   }
 }

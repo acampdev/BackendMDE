@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
+import gob.pe.muniesperanza.apprentasmdeapi.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -28,14 +29,15 @@ public class AuthService {
     public AuthResponse login(LoginRequest request) {
           authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(),
                  request.getPassword()));
-        UserDetails user=userRepository.findByUsername(request.getUsername()).orElseThrow();
+        Usuario usuario = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
+        UserDetails user = usuario;
         String token=jwtService.getToken(user);
-      Optional<Usuario> usuario = userRepository.findByUsername(request.getUsername());
         return AuthResponse.builder()
             .token(token)
-            .codUsuario(usuario.get().getId())
-            .username(usuario.get().getUsername())
-            .codRol(usuario.get().getCodRol())
+            .codUsuario(usuario.getId())
+            .username(usuario.getUsername())
+            .codRol(usuario.getCodRol())
             .build();
 
     }
